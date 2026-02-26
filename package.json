@@ -1,0 +1,30 @@
+{
+  "name": "semantic-search-engine",
+  "version": "1.0.0",
+  "description": "Semantic search engine using MongoDB Atlas Vector Search",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node --no-deprecation src/index.js",
+    "dev": "node --no-deprecation --watch src/index.js"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "keywords": [
+    "semantic-search",
+    "mongodb",
+    "vector-search",
+    "openai",
+    "embeddings"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.0",
+    "jsonwebtoken": "^9.0.3",
+    "mongodb": "^6.10.0",
+    "openai": "^4.52.0"
+  }
+}

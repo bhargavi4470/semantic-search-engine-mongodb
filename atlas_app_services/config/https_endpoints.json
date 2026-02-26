@@ -1,0 +1,29 @@
+[
+  {
+    "route": "/ingest",
+    "http_method": "POST",
+    "function_name": "ingest",
+    "validation_method": "NO_VALIDATION",
+    "respond_with_result": false,
+    "fetch_custom_user_data": true,
+    "disabled": false
+  },
+  {
+    "route": "/search",
+    "http_method": "GET",
+    "function_name": "search",
+    "validation_method": "NO_VALIDATION",
+    "respond_with_result": false,
+    "fetch_custom_user_data": true,
+    "disabled": false
+  },
+  {
+    "route": "/search",
+    "http_method": "POST",
+    "function_name": "search",
+    "validation_method": "NO_VALIDATION",
+    "respond_with_result": false,
+    "fetch_custom_user_data": true,
+    "disabled": false
+  }
+]

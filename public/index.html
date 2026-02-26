@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Semantic Search</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="app">
+    <header class="header">
+      <a href="#" class="logo" data-nav="search">Semantic Search</a>
+      <nav class="nav">
+        <a href="#" data-nav="search" class="active">Search</a>
+        <a href="#" data-nav="admin">Admin</a>
+      </nav>
+    </header>
+
+    <!-- Search page -->
+    <main id="view-search" class="view active">
+      <section class="search-hero">
+        <h1>Search by meaning</h1>
+        <p>Ask in plain language. Results are ranked by semantic similarity.</p>
+        <form class="search-form" id="form-search" novalidate>
+          <div class="search-input-wrap">
+            <input
+              type="text"
+              class="search-input"
+              id="input-query"
+              name="q"
+              placeholder="e.g. How does vector search work?"
+              autocomplete="off"
+              required
+            >
+          </div>
+          <label class="search-options">
+            <input type="checkbox" id="input-explain" name="explain">
+            <span>Include AI explanation for each result</span>
+          </label>
+          <button type="submit" class="btn btn-primary" id="btn-search">Search</button>
+        </form>
+      </section>
+    </main>
+
+    <!-- Results page -->
+    <main id="view-results" class="view">
+      <div class="results-bar">
+        <a href="#" class="btn btn-secondary" data-nav="search">← Back to search</a>
+        <p class="results-query">Results for <strong id="results-query-text"></strong></p>
+        <span class="results-count" id="results-count"></span>
+      </div>
+      <div id="results-container">
+        <div class="result-list" id="result-list"></div>
+        <div class="results-loading" id="results-loading" hidden>Loading…</div>
+        <div class="results-error" id="results-error" hidden></div>
+        <div class="results-empty" id="results-empty" hidden>No results. Try a different query or add documents in Admin.</div>
+      </div>
+    </main>
+
+    <!-- Admin page -->
+    <main id="view-admin" class="view">
+      <section class="admin-hero">
+        <h1>Add documents</h1>
+        <p>Upload text to make it searchable. Each document needs content; title, tags, and source are optional.</p>
+      </section>
+      <form class="upload-form" id="form-upload" novalidate>
+        <div class="form-group">
+          <label for="upload-content">Content *</label>
+          <textarea id="upload-content" name="content" placeholder="Paste or type the full text to embed and store…" required></textarea>
+          <span class="form-hint">This text is converted to an embedding and stored for semantic search.</span>
+        </div>
+        <div class="form-group">
+          <label for="upload-title">Title</label>
+          <input type="text" id="upload-title" name="title" placeholder="Short title for the document">
+        </div>
+        <div class="form-group">
+          <label for="upload-tags">Tags (comma-separated)</label>
+          <input type="text" id="upload-tags" name="tags" placeholder="e.g. tutorial, mongodb, vector">
+        </div>
+        <div class="form-group">
+          <label for="upload-source">Source</label>
+          <input type="text" id="upload-source" name="source" placeholder="URL or reference">
+        </div>
+        <button type="submit" class="btn btn-primary" id="btn-upload">Add document</button>
+      </form>
+      <div id="upload-status" class="upload-status" hidden></div>
+    </main>
+
+    <footer class="footer">
+      Semantic Search · Hackathon demo
+    </footer>
+  </div>
+  <script src="/js/app.js"></script>
+</body>
+</html>

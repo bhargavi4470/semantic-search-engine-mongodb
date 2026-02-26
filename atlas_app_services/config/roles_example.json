@@ -1,0 +1,19 @@
+{
+  "description": "Example documents for custom user data (users_metadata collection). Set user_id to the App Services user id and role to one of: admin, ingest, search, user.",
+  "examples": [
+    {
+      "user_id": "<App Services User ID from Authentication > Users> copy ID>",
+      "role": "admin"
+    },
+    {
+      "user_id": "<Another User ID>",
+      "role": "search"
+    }
+  ],
+  "roles": {
+    "admin": "Full access: ingest + search",
+    "ingest": "Can call POST /ingest only",
+    "search": "Can call GET/POST /search only",
+    "user": "Same as search: can call /search only"
+  }
+}

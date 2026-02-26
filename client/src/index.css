@@ -1,0 +1,96 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Smooth animations — hackathon demo friendly */
+@layer utilities {
+  .animate-fade-in {
+    animation: fadeIn 0.4s ease-out forwards;
+  }
+
+  .animate-fade-in-up {
+    animation: fadeInUp 0.45s ease-out forwards;
+  }
+
+  .animate-fade-in-up-delay-1 {
+    animation-delay: 0.06s;
+  }
+
+  .animate-fade-in-up-delay-2 {
+    animation-delay: 0.12s;
+  }
+
+  .animate-fade-in-up-delay-3 {
+    animation-delay: 0.18s;
+  }
+
+  .animate-fade-in-up-delay-4 {
+    animation-delay: 0.24s;
+  }
+
+  .animate-fade-in-up-delay-5 {
+    animation-delay: 0.3s;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@layer base {
+  :root {
+    --background: 255, 255, 255;
+    --foreground: 2, 6, 23;
+  }
+
+  .dark {
+    --background: 2, 6, 23;
+    --foreground: 248, 250, 252;
+  }
+
+  body {
+    @apply transition-colors duration-300;
+    background-color: rgb(var(--background));
+    color: rgb(var(--foreground));
+  }
+}
+
+::selection {
+  background-color: rgba(99, 102, 241, 0.3);
+  color: #fff;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-slate-50 dark:bg-[#020617];
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-slate-200 dark:bg-[#1e293b] rounded-full border-4 border-transparent bg-clip-padding;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-slate-300 dark:bg-[#334155];
+}
