@@ -8,24 +8,22 @@ import { ObjectId } from 'mongodb';
 const router = express.Router();
 
 // Signup
-router.post('/signup', async (req, res) => {
+router.post('/signup', async (req, res, next) => {
     try {
-        const { username, password } = req.body;
+        const { username, password } = req.body ?? {};
 
-        if (!username || !password) {
-            return res.status(400).json({ success: false, message: 'Username and password are required' });
+        if (typeof username !== 'string' || typeof password !== 'string' || !username.trim() || !password) {
+            return res.status(400).json({ success: false, message: 'Valid username and password are required' });
         }
 
         const db = getDb();
         const users = db.collection('users');
 
-        // Check if user exists
         const existing = await users.findOne({ username });
         if (existing) {
             return res.status(400).json({ success: false, message: 'Username already taken' });
         }
 
-        // Hash password
         const salt = await bcrypt.genSalt(10);
         const passwordHash = await bcrypt.hash(password, salt);
 
@@ -48,18 +46,17 @@ router.post('/signup', async (req, res) => {
         });
 
     } catch (err) {
-        console.error('Signup error:', err);
-        res.status(500).json({ success: false, message: 'Signup failed', error: err.message });
+        next(err);
     }
 });
 
 // Login
-router.post('/login', async (req, res) => {
+router.post('/login', async (req, res, next) => {
     try {
-        const { username, password } = req.body;
+        const { username, password } = req.body ?? {};
 
-        if (!username || !password) {
-            return res.status(400).json({ success: false, message: 'Username and password are required' });
+        if (typeof username !== 'string' || typeof password !== 'string' || !username.trim() || !password) {
+            return res.status(400).json({ success: false, message: 'Valid username and password are required' });
         }
 
         const db = getDb();
@@ -86,13 +83,12 @@ router.post('/login', async (req, res) => {
         });
 
     } catch (err) {
-        console.error('Login error:', err);
-        res.status(500).json({ success: false, message: 'Login failed', error: err.message });
+        next(err);
     }
 });
 
 // Get Current User
-router.get('/me', authMiddleware, async (req, res) => {
+router.get('/me', authMiddleware, async (req, res, next) => {
     try {
         const db = getDb();
         const user = await db.collection('users').findOne({ _id: new ObjectId(req.user.id) });
@@ -106,16 +102,16 @@ router.get('/me', authMiddleware, async (req, res) => {
             data: { user: normalizeUser(user) }
         });
     } catch (err) {
-        res.status(500).json({ success: false, message: 'Failed to fetch user' });
+        next(err);
     }
 });
 
 // Update Password
-router.post('/update-password', authMiddleware, async (req, res) => {
+router.post('/update-password', authMiddleware, async (req, res, next) => {
     try {
-        const { currentPassword, newPassword } = req.body;
+        const { currentPassword, newPassword } = req.body ?? {};
 
-        if (!currentPassword || !newPassword) {
+        if (typeof currentPassword !== 'string' || typeof newPassword !== 'string' || !currentPassword || !newPassword) {
             return res.status(400).json({ success: false, message: 'Both passwords are required' });
         }
 
@@ -139,7 +135,7 @@ router.post('/update-password', authMiddleware, async (req, res) => {
         res.json({ success: true, message: 'Password updated successfully' });
 
     } catch (err) {
-        res.status(500).json({ success: false, message: 'Failed to update password' });
+        next(err);
     }
 });
 

@@ -59,12 +59,25 @@ export async function handleSearch(req, res, next) {
     const numCandidatesParam = req.body?.numCandidates ?? req.query?.numCandidates;
     const explainParam = req.body?.explain ?? req.query?.explain;
 
-    const limit = limitParam !== undefined && limitParam !== null && limitParam !== ''
-      ? Math.min(Math.max(Number(limitParam), 1), MAX_LIMIT)
+    const parsePositiveInt = (val, { min = 1, max = Number.MAX_SAFE_INTEGER } = {}) => {
+      const n = typeof val === 'string' && val.trim() === '' ? NaN : Number.parseInt(val, 10);
+      if (!Number.isFinite(n) || n < min) return min;
+      return Math.min(n, max);
+    };
+
+    const limit = limitParam !== undefined && limitParam !== null
+      ? parsePositiveInt(limitParam, { min: 1, max: MAX_LIMIT })
       : DEFAULT_SEARCH_LIMIT;
-    const numCandidates = numCandidatesParam !== undefined && numCandidatesParam !== null && numCandidatesParam !== ''
-      ? Math.min(Math.max(Number(numCandidatesParam), limit), 10000)
+
+    let numCandidates = (numCandidatesParam !== undefined && numCandidatesParam !== null)
+      ? parsePositiveInt(numCandidatesParam, { min: limit, max: 10000 })
       : undefined;
+
+    // Ensure numCandidates is at least limit when provided
+    if (typeof numCandidates === 'number' && numCandidates < limit) {
+      numCandidates = limit;
+    }
+
     const explain = explainParam === true || explainParam === 'true' || explainParam === '1';
     const userId = req.user.id;
 

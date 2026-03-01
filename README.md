@@ -1,6 +1,83 @@
-# Semantic Search Engine
+# Semantic Search Engine for Mongo DB Documents
 
 Production-ready semantic search API using **MongoDB Atlas Vector Search**, **Node.js**, **Express**, and **OpenAI** (or Hugging Face) embeddings with **cosine similarity**.
+
+
+## Project Overview
+
+This project implements an AI-powered Semantic Search Engine using MongoDB Atlas Vector Search.
+
+Traditional keyword-based search fails to understand user intent and meaning.
+If the words in the query do not exactly match stored documents, relevant results are missed.
+
+Our system converts documents and user queries into embeddings (numerical meaning representations) and performs cosine similarity search to return the most contextually relevant results.
+
+This enables meaning-based intelligent search instead of simple keyword matching.
+
+
+##  Problem Statement
+
+Keyword-based search cannot understand:
+
+- Synonyms
+- Context
+- User intent
+- Natural language queries
+
+Example:
+
+Query: "account recovery"  
+Document: "reset password steps"
+
+Traditional search fails.  
+Semantic search correctly retrieves the document.
+
+
+##  Key Features
+
+- Meaning-based semantic search
+- MongoDB Atlas Vector Search
+- OpenAI / Hugging Face embeddings
+- Cosine similarity ranking
+- REST API backend (Node.js + Express)
+- React + Tailwind frontend
+- Secure authentication (Atlas App Services)
+
+
+##  System Architecture & User Flow
+
+![Architecture & User Flow](screenshots/architecture.png)
+
+### How It Works
+
+1. User uploads documents.
+2. Documents are converted into embeddings.
+3. Embeddings are stored in MongoDB.
+4. User enters a search query.
+5. Query is converted into embedding.
+6. MongoDB performs vector similarity search.
+7. Top relevant results are displayed with similarity scores.
+
+---
+
+##  Application Screenshots
+
+###  Login Page
+![Login Page](screenshots/login.png)
+
+###  Dashboard
+![Dashboard](screenshots/dashboard.png)
+
+###  Upload Documents
+![Upload](screenshots/upload.png)
+
+###  Semantic Search
+![Search](screenshots/search.png)
+
+###  User Profile
+![User Profile](screenshots/user-profile.png)
+
+---
 
 ## Tech Stack
 

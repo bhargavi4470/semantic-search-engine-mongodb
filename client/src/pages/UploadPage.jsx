@@ -2,11 +2,16 @@ import { useState, useCallback, useRef } from 'react';
 import { Upload, FileText, ImageIcon, Code, FileDigit, CheckCircle2, Loader2, Search, X, Database, Camera } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import Tesseract from 'tesseract.js';
-import * as pdfjsLib from 'pdfjs-dist';
+import { GlobalWorkerOptions, getDocument } from 'pdfjs-dist';
+import PdfWorker from 'pdfjs-dist/build/pdf.worker.min.mjs?worker';
+import PdfWorkerURL from 'pdfjs-dist/build/pdf.worker.min.mjs?url';
 import CameraScanner from '../components/CameraScanner';
 
-// Configure PDF.js worker
-pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`;
+// Configure PDF.js worker to use a locally bundled worker (fixes CDN/CORS issues)
+try {
+  GlobalWorkerOptions.workerPort = new PdfWorker();
+} catch {}
+GlobalWorkerOptions.workerSrc = PdfWorkerURL;
 import { useToast } from '../context/ToastContext';
 
 export default function UploadPage() {
@@ -150,7 +155,7 @@ export default function UploadPage() {
             info(`Extracting text from PDF ${i + 1}/${totalFiles}: ${file.name}...`);
             try {
               const arrayBuffer = await file.arrayBuffer();
-              const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+              const pdf = await getDocument({ data: arrayBuffer }).promise;
               let fullText = '';
               for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
                 const page = await pdf.getPage(pageNum);
@@ -159,6 +164,24 @@ export default function UploadPage() {
                 fullText += pageText + '\n';
               }
               content = fullText;
+
+              // Fallback OCR for scanned PDFs with no text layer
+              if (!content.trim()) {
+                info(`Running OCR on PDF ${i + 1}/${totalFiles}: ${file.name}...`);
+                let ocrText = '';
+                for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+                  const page = await pdf.getPage(pageNum);
+                  const viewport = page.getViewport({ scale: 2 });
+                  const canvas = document.createElement('canvas');
+                  const ctx = canvas.getContext('2d');
+                  canvas.width = viewport.width;
+                  canvas.height = viewport.height;
+                  await page.render({ canvasContext: ctx, viewport }).promise;
+                  const { data: { text } } = await Tesseract.recognize(canvas, 'eng');
+                  ocrText += text + '\n';
+                }
+                content = ocrText;
+              }
             } catch (pdfErr) {
               console.error('PDF Extraction Error:', pdfErr);
               throw new Error(`Failed to extract text from PDF: ${file.name}`);
@@ -173,9 +196,10 @@ export default function UploadPage() {
             });
           }
 
-          if (content.trim()) {
+          const cleanedContent = content.replace(/[^\x09\x0A\x0D\x20-\x7E\u00A0-\uFFFF]/g, ' ').trim();
+          if (cleanedContent) {
             rawDocuments.push({
-              content: content.trim(),
+              content: cleanedContent,
               metadata: {
                 title: file.name,
                 tags: tagsArray,

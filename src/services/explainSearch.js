@@ -71,7 +71,7 @@ Be analytical, objective, and clear. Output ONLY a JSON array of strings.`;
   const hfKey = process.env.HF_API_KEY;
   if (hfKey) {
     try {
-      const model = 'mistralai/Mistral-7B-Instruct-v0.2';
+      const model = 'meta-llama/Llama-3.2-3B-Instruct';
       const res = await fetch(`https://router.huggingface.co/v1/chat/completions`, {
         method: 'POST',
         headers: {
@@ -162,7 +162,7 @@ Focus on providing actionable context for the searcher.`;
     // Fallback to Hugging Face
     const hfKey = process.env.HF_API_KEY;
     if (hfKey) {
-      const model = 'mistralai/Mistral-7B-Instruct-v0.2';
+      const model = 'meta-llama/Llama-3.2-3B-Instruct';
       const res = await fetch(`https://router.huggingface.co/v1/chat/completions`, {
         method: 'POST',
         headers: {
@@ -248,7 +248,7 @@ Explanations should highlight core conceptual overlap and specific value, writte
       });
       raw = completion.choices?.[0]?.message?.content?.trim();
     } else if (hfKey) {
-      const model = 'mistralai/Mistral-7B-Instruct-v0.2';
+      const model = 'meta-llama/Llama-3.2-3B-Instruct';
       const res = await fetch(`https://router.huggingface.co/v1/chat/completions`, {
         method: 'POST',
         headers: {
@@ -271,29 +271,35 @@ Explanations should highlight core conceptual overlap and specific value, writte
     }
 
     if (raw) {
-      const content = raw.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/i, '').trim();
-      const parsed = JSON.parse(content);
+      try {
+        const content = raw.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/i, '').trim();
+        const parsed = JSON.parse(content);
 
-      const filteredResults = results
-        .map((res, i) => {
-          const item = parsed.analysis?.[i];
-          if (item && item.relevant) {
-            return {
-              ...res,
-              explanation: item.explanation
-            };
-          }
-          return null;
-        })
-        .filter(Boolean);
+        const filteredResults = results
+          .map((res, i) => {
+            const item = parsed.analysis?.[i];
+            if (item && item.relevant) {
+              return {
+                ...res,
+                explanation: item.explanation
+              };
+            }
+            return null;
+          })
+          .filter(Boolean);
 
-      return {
-        filteredResults,
-        aiContext: parsed.searchContext || null
-      };
+        return {
+          filteredResults,
+          aiContext: parsed.searchContext || null
+        };
+      } catch (parseErr) {
+        console.warn('[AI] Comprehensive Analysis JSON Parsing Failed.');
+        console.error('[AI] Parsing Error:', parseErr.message);
+        // Fallback handled by the function end
+      }
     }
   } catch (err) {
-    console.error('[AI] Comprehensive Analysis Error:', err.message);
+    console.error('[AI] Comprehensive Analysis API Error:', err.message);
   }
 
   // Fallback: return raw results without AI enhancements

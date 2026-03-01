@@ -22,9 +22,17 @@ export default function SearchPage() {
     setAiContext(null);
 
     try {
+      // Ensure user is authenticated
+      const token = localStorage.getItem('auth_token');
+      if (!token) {
+        throw new Error('Authorization token required. Please sign in and try again.');
+      }
+
       // Phase 1: Fast Vector Search (explain=false)
       const params = new URLSearchParams({ q: q.trim(), limit: 5 });
-      const res = await fetch(`/search?${params.toString()}`);
+      const res = await fetch(`/search?${params.toString()}`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || res.statusText);
 
@@ -36,7 +44,9 @@ export default function SearchPage() {
       if (explain) {
         setAiLoading(true);
         params.set('explain', 'true');
-        const aiRes = await fetch(`/search?${params.toString()}`);
+        const aiRes = await fetch(`/search?${params.toString()}`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
         const aiData = await aiRes.json();
 
         if (aiRes.ok) {
@@ -82,11 +92,21 @@ export default function SearchPage() {
       {aiContext && !loading && !error && <SearchContext context={aiContext} query={query} />}
 
       {aiLoading && (
-        <div className="flex items-center gap-3 px-6 py-3 rounded-2xl bg-indigo-50/50 dark:bg-indigo-500/5 border border-indigo-100 dark:border-indigo-500/10 animate-pulse">
-          <LoadingSpinner size="sm" />
-          <span className="text-xs font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-widest">
-            AI Strategy Agent is analyzing results...
-          </span>
+        <div className="mb-10 rounded-2xl border-2 border-indigo-200 dark:border-indigo-800 bg-gradient-to-br from-indigo-50 to-white dark:from-indigo-900/20 dark:to-slate-900 p-8 shadow-sm">
+          <div className="flex items-start gap-5">
+            <div className="rounded-xl bg-indigo-200 dark:bg-indigo-800 p-3.5 text-indigo-400 dark:text-indigo-500 animate-pulse">
+              <svg className="w-7 h-7" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275z" /><path d="M5 3v4" /><path d="M19 17v4" /><path d="M3 5h4" /><path d="M17 19h4" /></svg>
+            </div>
+            <div className="space-y-4 flex-1">
+              <h3 className="font-black text-slate-300 dark:text-slate-700 text-2xl tracking-tight">AI Insights</h3>
+              <div className="flex items-center gap-3">
+                <LoadingSpinner size="sm" />
+                <span className="text-sm font-bold text-indigo-500 dark:text-indigo-400 uppercase tracking-widest animate-pulse">
+                  AI Strategy Agent is analyzing results...
+                </span>
+              </div>
+            </div>
+          </div>
         </div>
       )}
 

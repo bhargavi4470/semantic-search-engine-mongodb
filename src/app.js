@@ -6,6 +6,7 @@ import { handleSearch } from './routes/search.js';
 import { handleStats } from './routes/stats.js';
 import { errorHandler } from './middleware/errorHandler.js';
 import { notFound } from './middleware/notFound.js';
+import { asyncHandler } from './middleware/asyncHandler.js';
 
 import authRoutes from './routes/auth.js';
 import { authMiddleware } from './middleware/auth.js';
@@ -37,10 +38,10 @@ app.get('/health', (_req, res) => {
 app.use('/api/auth', authRoutes);
 
 // Protected routes
-app.get('/stats', authMiddleware, handleStats);
-app.post('/ingest', authMiddleware, handleIngest);
-app.post('/search', authMiddleware, handleSearch);
-app.get('/search', authMiddleware, handleSearch);
+app.get('/stats', authMiddleware, asyncHandler(handleStats));
+app.post('/ingest', authMiddleware, asyncHandler(handleIngest));
+app.post('/search', authMiddleware, asyncHandler(handleSearch));
+app.get('/search', authMiddleware, asyncHandler(handleSearch));
 
 app.use(notFound);
 app.use(errorHandler);
