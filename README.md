@@ -66,16 +66,16 @@ Semantic search correctly retrieves the document.
 ![Login Page](screenshots/login.png)
 
 ###  Dashboard
-![Dashboard](screenshots/dashboard.png)
+![Dashboard](screenshots/Dashboard.png)
 
 ###  Upload Documents
-![Upload](screenshots/upload.png)
+![Upload](screenshots/Upload.png)
 
 ###  Semantic Search
-![Search](screenshots/search.png)
+![Search](screenshots/Search.png)
 
 ###  User Profile
-![User Profile](screenshots/user-profile.png)
+![User Profile](screenshots/User Profile.png)
 
 ---
 
